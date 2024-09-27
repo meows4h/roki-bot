@@ -9,3 +9,5 @@ The bot is named 'roki' because it's just a silly nickname that was given to me,
 
 ## Notes
 The model that is primarily used in the case of this bot is a fine-tuned model of the T5 Flan model from Google, with additional training done on my personal computer. The additional training was performed using a dataset of my direct messages with friends, in an attempt to push the model to respond more in my likeness. This is somewhat accomplished though as of right now, it lacks functionality to really respond in a coherent way even with something like a self-attention mask.
+
+The model itself will not be uploaded with this project, but the written code to accomplish what is done so far will be here.
