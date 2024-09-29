@@ -1,4 +1,4 @@
-# roki bot
+# Language Model Chatbot -- 'roki'
 
 The bot is named 'roki' because it's just a silly nickname that was given to me, so I figured it would fit a bot that is based on me.
 
