@@ -3,6 +3,7 @@ import csv
 import torch
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
+# to make command line input and output more readable
 async def prLightPurple(skk): print("\033[94m {}\033[00m" .format(skk))
 async def prYellow(skk): print("\033[93m {}\033[00m" .format(skk))
 
@@ -10,14 +11,14 @@ async def generate_message(input, tokenizer, model):
 
     input_ids = tokenizer.encode(input, return_tensors='pt')
 
-    # Update conversation history
+    # update conversation history
     conversation_history.append(input)
 
-    # Construct attention mask with dynamic weights
+    # construct attention mask with dynamic weights
     attention_mask = torch.zeros((1, len(tokenizer.encode(conversation_history[-1]))), dtype=torch.long, device=input_ids.device)
     
-    # Decay factor for attention weights (adjust as needed)
-    decay_factor = 0.9  # Example decay factor
+    # decay factor for attention weights (adjust as needed)
+    decay_factor = 0.9
     
     for i, message in enumerate(conversation_history):
         message_tokens = tokenizer.encode(message)
@@ -28,6 +29,7 @@ async def generate_message(input, tokenizer, model):
                                no_repeat_ngram_size=4, do_sample=True, top_k=25, top_p=0.87, temperature=0.92, pad_token_id=model.config.eos_token_id)
     response = tokenizer.decode(generated[0], skip_special_tokens=True)
 
+    # fixes issues related to output
     response = response.replace(' 3 ', ' <3 ')
     response = response.replace(' 3', ' <3')
 
@@ -49,7 +51,7 @@ def run_discord_bot():
     intents = discord.Intents.all()
     client = discord.Client(intents=intents)
 
-    # Load the fine-tuned model and tokenizer
+    # load the fine-tuned model and tokenizer
     model_path = './training/flan'
     model = T5ForConditionalGeneration.from_pretrained(model_path)
     tokenizer = T5Tokenizer.from_pretrained(model_path)
@@ -81,7 +83,8 @@ def run_discord_bot():
         if channel == 'Direct Message with Unknown User':
 
             response = await generate_message(user_message, tokenizer, model)
-
+            
+            # sends debug message if nothing is made
             if response == '':
                 await message.author.send('Generated nothing. (system message)')
                 await prYellow(f'bot: {response}')
@@ -89,6 +92,8 @@ def run_discord_bot():
             else:
                 await prYellow(f'bot: {response}')
                 msg_filtered = 0
+
+                # filters out any bad words dictated by the filter
                 for word in filtered:
                     if word in response.lower():
                         await message.author.send('Filtered. (system message)')
